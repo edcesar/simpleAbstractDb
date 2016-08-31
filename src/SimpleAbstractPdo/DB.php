@@ -20,6 +20,7 @@ class DB implements DBInterface
 	private $query;
 
 	private $stmt;
+	
 
 	public function __construct()
 	{
