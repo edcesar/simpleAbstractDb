@@ -1,0 +1,8 @@
+{
+	"autoload":{
+		"psr-4": {
+            "SimpleAbstractPdo\\": "src/SimpleAbstractPdo/",
+            "src\\": "src/"
+        }
+	}
+}
