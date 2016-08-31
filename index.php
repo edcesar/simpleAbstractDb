@@ -22,15 +22,22 @@ $cliente->email = 'joice@gmail.com';
 $cliente->cidade = "Minas Gerais";
 $cliente->estado = "MG";
 
- $cliente->save();
+// $cliente->save();
 
 $cliente->update(44);
 
 foreach ($cliente->columns as $key => $value) {
-	print $value  . PHP_EOL;
+//	print $value  . PHP_EOL;
 }
 
 print PHP_EOL . PHP_EOL;
+
+
+//print_r($cliente->find(63));
+
+print PHP_EOL . PHP_EOL;
+
+print_r($cliente->findOneBy(['nome' => 'joice']));
 
 //print $cliente->getColumnsPdo();
 

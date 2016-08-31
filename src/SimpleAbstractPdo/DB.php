@@ -6,7 +6,7 @@ use SimpleAbstractPdo\DBInterface;
 class DB implements DBInterface
 {
 	public $columns;
-	
+
 	protected $table;
 	
 	protected $primarykey = "id";
@@ -143,9 +143,33 @@ class DB implements DBInterface
 
 	public function find($id)
 	{
-		$query = "select * from {$this->table} where id = :id";
+		$query = "select * from {$this->table} where {$this->primarykey} = :id";
 		$stmt = $this->db->prepare($query);
-		$stmt->bindValue('id', $id);
+		$stmt->bindValue("{$this->primarykey}", $id);
+		$stmt->execute();
+
+		return $stmt->fetch(\PDO::FETCH_ASSOC);
+	}
+
+	public function findBy(array $parameters)
+	{
+		$field = array_keys($parameters)[0];
+
+		$query = "select * from {$this->table} where {$field} = :{$field}";
+		$stmt = $this->db->prepare($query);
+		$stmt->bindValue(":{$field}", $parameters[$field]);
+		$stmt->execute();
+
+		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+	}
+
+	public function findOneBy(array $parameters)
+	{
+		$field = array_keys($parameters)[0];
+
+		$query = "select * from {$this->table} where {$field} = :{$field}";
+		$stmt = $this->db->prepare($query);
+		$stmt->bindValue(":{$field}", $parameters[$field]);
 		$stmt->execute();
 
 		return $stmt->fetch(\PDO::FETCH_ASSOC);
