@@ -5,20 +5,21 @@ use SimpleAbstractPdo\DBInterface;
 
 class DB implements DBInterface
 {
+	public $columns;
 	
 	protected $table;
 	
 	protected $primarykey = "id";
-
+	
 	private $db;
 	
-	public $columns;
-
 	private $parameters;
 
 	private $columnsFomatedToSql;
 
 	private $query;
+
+	private $stmt;
 
 	public function __construct()
 	{
@@ -66,14 +67,14 @@ class DB implements DBInterface
 
   	public function save()
   	{
-  		$query = "insert into {$this->table} ({$this->getColumnsFomatedToSql()}) values ({$this->getParameters()})";
-		$stmt = $this->db->prepare($query);
+  		$this->query = "insert into {$this->table} ({$this->getColumnsFomatedToSql()}) values ({$this->getParameters()})";
+		$this->stmt = $this->db->prepare($this->query);
 
 		foreach ($this->columns as $key => $value) {
-			$stmt->bindValue(":{$key}", $value);			
+			$this->stmt->bindValue(":{$key}", $value);			
 		}
 
-		$stmt->execute();
+		$this->execute();
   	}
 
 
@@ -84,6 +85,17 @@ class DB implements DBInterface
 		$stmt->bindValue(':{$this->primarykey}', $id);
 
 		$stmt->execute();
+	}
+
+
+	public function prepare()
+	{
+		$this->stmt = $this->db->prepare($this->query);
+	}
+
+	public function execute()
+	{
+		$this->stmt->execute();
 	}
 
 	public function update($id)
@@ -97,15 +109,15 @@ class DB implements DBInterface
 
 		$update = substr($update, 0, -1);
 
-		$query = "update {$this->table} set {$update} where {$this->primarykey} = {$id}";		
+		$this->query = "update {$this->table} set {$update} where {$this->primarykey} = {$id}";		
 
-		$stmt = $this->db->prepare($query);
+		$this->stmt = $this->db->prepare($this->query);
 
 		foreach ($this->columns as $key => $value) {
-			$stmt->bindValue(":{$key}", $value);			
+			$this->stmt->bindValue(":{$key}", $value);			
 		}
 
-		$stmt->execute();
+		$this->execute();
 	}
 
 	public function list()
@@ -113,20 +125,8 @@ class DB implements DBInterface
 		
 	}
 
-	public function findColumnsB($id = 17)
-	{
-		$query = "SELECT `COLUMN_NAME` 
-					FROM `INFORMATION_SCHEMA`.`COLUMNS` 
-					WHERE `TABLE_SCHEMA`='pdo' 
-					AND `TABLE_NAME`='clientes'";
-		$stmt = $this->db->prepare($query);
-		
-		$stmt->execute();
 
-		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-	}
-
-	public function setColumns()
+	public function setColumnsThatExistInTable()
 	{
 		$query = "SELECT * from {$this->table} limit 1";
 		$stmt = $this->db->prepare($query);
@@ -140,10 +140,6 @@ class DB implements DBInterface
 		return $this;
 	}
 
-	public function getColumns__()
-	{
-		return $this->columns;
-	}
 
 	public function find($id)
 	{

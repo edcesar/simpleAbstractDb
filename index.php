@@ -15,17 +15,16 @@ catch (PDOException $e) {
 }
 
 
-
 $cliente = new Cliente();
 
-$cliente->nome = 'fabiana';
-$cliente->email = 'fabiana@gmail.com';
-$cliente->cidade = "Rio";
-$cliente->estado = "RJ";
+$cliente->nome = 'Joice';
+$cliente->email = 'joice@gmail.com';
+$cliente->cidade = "Minas Gerais";
+$cliente->estado = "MG";
 
  $cliente->save();
 
-$cliente->update(50);
+$cliente->update(44);
 
 foreach ($cliente->columns as $key => $value) {
 	print $value  . PHP_EOL;
